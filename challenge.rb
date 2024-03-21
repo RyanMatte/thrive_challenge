@@ -10,7 +10,7 @@ class Challenge
     end
 
     def calculate_companies
-        File.open("output.txt", "a") do |file|
+        File.open("output.txt", "w") do |file|
             @companies.each do |company_data|
                 company = Company.new(company_data)
                 next if empty_users?(company)
