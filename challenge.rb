@@ -13,7 +13,8 @@ class Challenge
         File.open("output.txt", "a") do |file|
             @companies.each do |company_data|
                 company = Company.new(company_data)
-                file.write(print_company(company))
+                next if empty_users?(company)
+                file.write(print_company(company)) 
             end
         end
     end
@@ -61,6 +62,11 @@ class Challenge
         output << "\t\t#{user["last_name"]}, #{user["first_name"]}, #{user["email"]}\n"
         output << "\t\t  Previous Token Balance, #{user["tokens"]}\n"
         output << "\t\t  New Token Balance #{user["tokens"] + company.top_up}\n"
+    end
+
+    def empty_users?(company)
+        user_list = @users.select { |user| user["company_id"] == company.id }
+        user_list.empty?
     end
 
     # If we chose to email users, we should grab that list of users with the ability to be emailed
