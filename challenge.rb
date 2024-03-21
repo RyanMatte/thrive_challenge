@@ -33,30 +33,27 @@ class Challenge
     end
 
     def print_company(company)
-        # initialize a varaible to track our token total
         total = 0
-
         output = "\n\tCompany Id: #{company.id}\n"
         output << "\tCompany Name: #{company.name}\n" 
-
         output << "\tUsers Emailed:\n"
-        company_email_users = company_users(company, true)
-        company_email_users.sort_by! { |user| user["last_name"] }
-        if company.email_status
-            company_email_users.each do |user|
+        total += print_users(company, true, output)
+        output << "\tUsers Not Emailed:\n"
+        total += print_users(company, false, output)
+        output << "\t\tTotal amount of top ups for #{company.name}: #{total}\n"
+    end
+
+    def print_users(company, emailed, output)
+        total = 0
+        company_users = company_users(company, emailed)
+        company_users.sort_by! { |user| user["last_name"] }
+        if company.email_status || !emailed
+            company_users.each do |user|
                 total += company.top_up
                 write_user_details(output, user, company)
             end
         end
-
-        output << "\tUsers Not Emailed:\n"
-        company_users = company_users(company, false)
-        company_users.sort_by! { |user| user["last_name"] }
-        company_users.each do |user|
-            total += company.top_up
-            write_user_details(output, user, company)
-        end
-        output << "\t\tTotal amount of top ups for #{company.name}: #{total}\n"
+        total
     end
 
     # Define a helper method to write user details to the file
